@@ -1,5 +1,5 @@
 ---
-title: "Exercises R3"
+title: "Collaborate"
 author: "vallucas"
 date: "08/07/2021"
 output: html_document
@@ -29,7 +29,7 @@ plot(pressure)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 ---
-title: "Welcome"
+title: "Collaborate"
 ---
 
-Hello, Website!
+Like branches of a tree.
