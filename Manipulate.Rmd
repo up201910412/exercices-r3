@@ -1,0 +1,48 @@
+---
+title: "Manipulate"
+author: "up201910412"
+date: "09/07/2021"
+output: html_document
+---
+## Read online table
+
+### Download table (`*.csv`)
+```{r}
+# set variables
+csv_url  <- "https://oceanview.pfeg.noaa.gov/erddap/tabledap/cciea_AC.csv"
+# if ERDDAP server down (Error in download.file) with URL above, use this:
+#    csv_url <- "https://raw.githubusercontent.com/noaa-iea/r3-train/master/data/cciea_AC.csv"
+dir_data <- "data"
+
+# derived variables
+csv <- file.path(dir_data, basename(csv_url))
+
+# create directory
+dir.create(dir_data, showWarnings = F)
+
+# download file
+if (!file.exists(csv))
+  download.file(csv_url, csv)
+```
+### Read table `read.csv()`
+```{r}
+# attempt to read csv
+d <- read.csv(csv)
+
+# show the data frame
+d
+```
+
+```{r}
+# read csv by skipping first two lines, so no header
+d <- read.csv(csv, skip = 2, header = FALSE)
+d
+
+# update data frame to original column names
+names(d) <- names(read.csv(csv))
+d
+
+# update for future reuse (NEW!)
+write.csv(d, csv, row.names = F)
+```
+
