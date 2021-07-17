@@ -3,6 +3,8 @@ title: "Manipulate"
 author: "up201910412"
 date: "11/07/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -12,22 +14,4 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Read online table
 
 ### Download table (`*.csv`)
-
-```{r}
-# set variables
-csv_url  <- "https://oceanview.pfeg.noaa.gov/erddap/tabledap/cciea_AC.csv"
-# if ERDDAP server down (Error in download.file) with URL above, use this:
-#    csv_url <- "https://raw.githubusercontent.com/noaa-iea/r3-train/master/data/cciea_AC.csv"
-dir_data <- "data"
-
-# derived variables
-csv <- file.path(dir_data, basename(csv_url))
-
-# create directory
-dir.create(dir_data, showWarnings = F)
-
-# download file
-if (!file.exists(csv))
-  download.file(csv_url, csv)
-```
 
