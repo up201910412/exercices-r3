@@ -71,12 +71,12 @@ library(DT)
 library(dplyr)
 
 d <- d %>%
- #tibble
- tibble() %>%
- #mutate time
- mutate(
-   time = as.Date(substr(time,1,10))) %/%
- #select columns
+  #tibble
+  tibble() %>%
+  #mutate time
+  mutate(
+    time = as.Date(substr(time,1,10))) %/%
+  #select columns
   select(
     time, 
     starts_with("total_fisheries_revenue")) %>% 
