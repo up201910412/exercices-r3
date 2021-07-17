@@ -54,3 +54,36 @@ tibble::tibble(d)
 
 ### Show table `DT::datatable()`
 
+```{r}
+# show table
+DT::datatable(d)
+
+library(DT)
+datatable(d)
+```
+
+## Wrangle data
+
+### Manipulate with `dplyr`
+
+```{r}
+library(DT)
+library(dplyr)
+
+d <- d %>%
+ #tibble
+ tibble() %>%
+ #mutate time
+ mutate(
+   time = as.Date(substr(time,1,10))) %/%
+ #select columns
+  select(
+    time, 
+    starts_with("total_fisheries_revenue")) %>% 
+  # filter rows
+  filter(
+    time >= as.Date("1981-01-01"))
+
+datatable(d)
+```
+
