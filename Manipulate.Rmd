@@ -2,7 +2,12 @@
 title: "Manipulate"
 author: "up201910412"
 date: "11/07/2021"
-output: html_document
+output: 
+ html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: "show"
 editor_options: 
   chunk_output_type: console
 ---
@@ -73,10 +78,41 @@ library(dplyr)
 d <- d %>%
   #tibble
   tibble() %>%
-  #mutate time
+ 
+   #mutate time
   mutate(
     time = as.Date(substr(time,1,10))) %/%
-  #select columns
+
+   #select columns
+  select(
+    time, 
+    starts_with("total_fisheries_revenue")) %>% 
+ 
+   # filter rows
+  filter(
+    time >= as.Date("1981-01-01"))
+
+datatable(d)
+```
+
+```{r}
+library(DT)
+library(dplyr)
+## 
+## Attaching package: 'dplyr'
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+d <- d %>% 
+  # tibble
+  tibble() %>% 
+  # mutate time
+  mutate(
+    time = as.Date(substr(time, 1, 10))) %>% 
+  # select columns
   select(
     time, 
     starts_with("total_fisheries_revenue")) %>% 
@@ -85,5 +121,75 @@ d <- d %>%
     time >= as.Date("1981-01-01"))
 
 datatable(d)
+```
+
+### Tidy with `tidyr`
+
+```{r}
+library(tidyr)
+
+d <- d %>% 
+  pivot_longer(-time)
+
+datatable(d)
+```
+
+### Summarize with `dplyr`
+
+```{r}
+library(stringr)
+
+d <- d %>% 
+  mutate(
+    region = str_replace(name, "total_fisheries_revenue_", "")) %>% 
+  select(time, region, value)
+datatable(d)
+
+d_sum <- d %>% 
+  group_by(region) %>% 
+  summarize(
+    avg_revenue = mean(value))
+datatable(d_sum) %>% 
+  formatCurrency("avg_revenue")
+```
+
+### Apply functions with `purrr` on a `nest`'ed `tibble`
+
+```{r}
+library(purrr)
+
+n <- d %>% 
+  group_by(region) %>% 
+  nest(
+    data = c(time, value))
+n
+
+## # A tibble: 4 x 2
+## # Groups:   region [4]
+##   region    data             
+##   <chr>     <list>           
+## 1 ca        <tibble [40 × 2]>
+## 2 coastwide <tibble [40 × 2]>
+## 3 or        <tibble [40 × 2]>
+## 4 wa        <tibble [40 × 2]>
+
+n <- n %>% 
+  mutate(
+    lm    = map(data, function(d){
+      lm(value ~ time, d) } ),
+    trend = map_dbl(lm, function(m){
+      coef(summary(m))["time","Estimate"] }))
+n
+## # A tibble: 4 x 4
+## # Groups:   region [4]
+##   region    data              lm        trend
+##   <chr>     <list>            <list>    <dbl>
+## 1 ca        <tibble [40 × 2]> <lm>   -0.0117 
+## 2 coastwide <tibble [40 × 2]> <lm>   -0.00454
+## 3 or        <tibble [40 × 2]> <lm>    0.00379
+## 4 wa        <tibble [40 × 2]> <lm>    0.00333
+n %>% 
+  select(region, trend) %>% 
+  datatable()
 ```
 
